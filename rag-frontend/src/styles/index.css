@@ -1,0 +1,27 @@
+:root {
+  --bg: #0b0a0e;
+  --panel: #111015;
+  --panel-2: #1a1920;
+  --border: rgba(255, 255, 255, 0.09);
+  --text: #f2f0f7;
+  --muted: #8b8894;
+  --accent: #a77bff;
+  --accent-2: #6d4bd8;
+  font: 15px/1.5 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
+  color-scheme: dark;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { margin: 0; height: 100%; }
+
+body { background: var(--bg); overflow: hidden; }
+
+button { font: inherit; color: inherit; cursor: pointer; }
+
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
