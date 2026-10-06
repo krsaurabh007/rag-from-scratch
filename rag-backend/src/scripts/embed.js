@@ -1,7 +1,7 @@
 require('dotenv').config();
 const path = require('path');
 const { Pool } = require('pg');
-const { extractText, chunkText, getEmbedding } = require('../utils');
+const { extractText, chunkText, countTokens, getEmbedding } = require('../utils');
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -17,7 +17,7 @@ async function main() {
     await pool.query(
       `INSERT INTO document_chunks (document_id, content, embedding, metadata)
        VALUES ($1, $2, $3, $4)`,
-      [1, chunks[i], JSON.stringify(embedding), JSON.stringify({ source: 'Saurabh_Resumee.pdf', chunk_index: i })]
+      [1, chunks[i], JSON.stringify(embedding), JSON.stringify({ source: 'Saurabh_Resumee.pdf', chunk_index: i, token_count: countTokens(chunks[i]) })]
     );
     console.log(`Chunk ${i + 1}/${chunks.length} stored`);
   }

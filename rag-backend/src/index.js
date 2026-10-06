@@ -4,7 +4,7 @@ const cors = require('cors');
 const multer = require('multer');
 const fs = require('fs');
 const { Pool } = require('pg');
-const { extractText, chunkText, getEmbedding, retrieveChunks, generateAnswer } = require('./utils');
+const { extractText, chunkText, countTokens, getEmbedding, retrieveChunks, generateAnswer } = require('./utils');
 
 const app = express();
 app.use(cors());
@@ -48,7 +48,7 @@ app.post('/documents/upload', upload.single('file'), async (req, res) => {
       await pool.query(
         `INSERT INTO document_chunks (document_id, content, embedding, metadata)
          VALUES ($1, $2, $3, $4)`,
-        [documentId, chunks[i], JSON.stringify(embedding), JSON.stringify({ source: req.file.originalname, chunk_index: i })]
+        [documentId, chunks[i], JSON.stringify(embedding), JSON.stringify({ source: req.file.originalname, chunk_index: i, token_count: countTokens(chunks[i]) })]
       );
     }
 
