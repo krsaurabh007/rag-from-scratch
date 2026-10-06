@@ -2,6 +2,8 @@ const fs = require('fs');
 const pdf = require('pdf-parse');
 const { encode } = require('gpt-tokenizer');
 
+const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
+
 async function extractText(filePath) {
   const dataBuffer = fs.readFileSync(filePath);
   const data = await pdf(dataBuffer);
@@ -227,25 +229,13 @@ function chunkText(text, options = {}) {
 }
 
 async function getEmbedding(text) {
-  const response = await fetch('http://localhost:11434/api/embed', {
+  const response = await fetch(`${OLLAMA_URL}/api/embed`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model: 'nomic-embed-text', input: text })
   });
   const data = await response.json();
   return data.embeddings[0];
-}
-
-async function retrieveChunks(pool, question, topK = 5) {
-  const questionEmbedding = await getEmbedding(question);
-  const result = await pool.query(
-    `SELECT content, metadata, embedding <=> $1 AS distance
-     FROM document_chunks
-     ORDER BY embedding <=> $1
-     LIMIT $2`,
-    [JSON.stringify(questionEmbedding), topK]
-  );
-  return result.rows;
 }
 
 async function generateAnswer(question, contextChunks) {
@@ -264,7 +254,7 @@ Question: ${question}
 
 Answer:`;
 
-  const response = await fetch('http://localhost:11434/api/generate', {
+  const response = await fetch(`${OLLAMA_URL}/api/generate`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model: 'llama3.1:8b', prompt, stream: false })
@@ -273,4 +263,4 @@ Answer:`;
   return data.response;
 }
 
-module.exports = { extractText, chunkText, buildChunks, countTokens, getEmbedding, retrieveChunks, generateAnswer };
+module.exports = { extractText, chunkText, buildChunks, countTokens, getEmbedding, generateAnswer, OLLAMA_URL };
