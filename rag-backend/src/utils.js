@@ -250,7 +250,12 @@ async function retrieveChunks(pool, question, topK = 5) {
 
 async function generateAnswer(question, contextChunks) {
   const context = contextChunks.map((c, i) => `[${i + 1}] ${c.content}`).join('\n\n');
+  const today = new Date().toISOString().slice(0, 10);
   const prompt = `You are answering questions based only on the context below. If the answer isn't in the context, say you don't know.
+
+Today's date is ${today}. In the context, "Present" in a date range means ${today}.
+If the context states the answer directly (for example "2.7 years of experience" in a summary), quote that value as-is and do not recalculate it.
+Keep answers concise. Do not show step-by-step arithmetic unless the user asks for it.
 
 Context:
 ${context}

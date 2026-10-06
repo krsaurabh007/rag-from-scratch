@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
     "embed": "node src/scripts/embed.js",
+    "db:setup": "node src/scripts/setup-db.js",
     "preview": "node src/scripts/preview-chunks.js",
     "retrieve": "node src/scripts/retrieve.js",
     "generate": "node src/scripts/generate.js"
